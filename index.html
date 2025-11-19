@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!-- photos automatically taken by our building's entrance camera when our doorbell is rang -->
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>At the Door</title>
+        <link rel="icon" type="image/x-icon" href="favicon.ico">
+        <style>
+            body{
+                margin:0;
+                padding:0;
+                width:100vw;
+                height:100vh;
+                display:flex;
+                flex-direction:column;
+                justify-content:center;
+                align-items:center;
+                font-family:arial;
+            }
+
+            img{
+                width:50vw;
+                max-width:500px;
+                height:auto;
+            }
+
+            #position{
+                font-size:10px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="container">
+        </div>
+        <p id="position"></p>
+        <script>
+            fetch("https://api.are.na/v2/channels/at-the-door?per=100")
+            .then(res => res.json())
+            .then(data => {
+                const container = document.getElementById("container");
+
+                const img = document.createElement("img");
+                container.appendChild(img);
+
+                let hoverZone = window.innerWidth / data.length;
+                let currentIndex;
+
+                window.addEventListener('resize', () => {
+                    hoverZone = window.innerWidth / data.length;
+                });
+
+                document.addEventListener('mousemove', function(event){
+                    const x = event.clientX;
+                    currentIndex = Math.floor(x/hoverZone);
+
+                    img.src = data.contents[currentIndex].image.display.url;
+                    // document.getElementById("position").textContent = `${currentIndex}`;
+                })
+
+                document.addEventListener('click', function(){
+                    window.open(`https://are.na/block/${data.contents[currentIndex].id}`, "_blank");
+                })
+            })
+        </script>
+    </body>
+</html>
